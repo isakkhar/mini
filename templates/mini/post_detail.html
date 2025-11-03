@@ -72,7 +72,7 @@
                   {% if comment.author.image %}
                     <img src="{{ comment.author.image.url }}" alt="{{ comment.author.name }}">
                   {% else %}
-                    <img src="{% static 'assets/imgs/authors/default.png' %}" alt="{{ comment.author.name }}">
+                    <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ comment.author.name }}">
                   {% endif %}
                   <div class="author-info">
                     <h6 class="color-gray-700">{{ comment.name }}</h6>
@@ -139,7 +139,7 @@
                                 {% if cat.image %}
                                   <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
                                 {% else %}
-                                  <img src="{% static 'assets/imgs/tags/default.png' %}" alt="{{ cat.name }}">
+                                  <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ cat.name }}">
                                 {% endif %}
                               </a>
                             </div>

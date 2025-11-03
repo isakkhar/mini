@@ -25,7 +25,11 @@
           <div class="swiper-wrapper wow animate__animated animate__fadeIn">
             <div class="swiper-slide">
               <div class="image-detail mb-30">
-                <img class="bdrd16" src="{{ project.image.url }}" alt="{{ project.title }}">
+                {% if project.image %}
+                  <img class="bdrd16" src="{{ project.image.url }}" alt="{{ project.title }}">
+                {% else %}
+                  <img class="bdrd16" src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ project.title }}">
+                {% endif %}
               </div>
             </div>
             <!-- If you have multiple images, loop here -->

@@ -26,7 +26,11 @@
               <div class="card-style-1 hover-up mb-30">
                 <div class="card-image">
                   <a class="link-post" href="{% url 'portfolio_detail' slug=project.slug %}">
-                    <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                    {% if project.image %}
+                      <img src="{{ project.image.url }}" alt="{{ project.title }}">
+                    {% else %}
+                      <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ project.title }}">
+                    {% endif %}
                     <div class="card-info card-bg-2">
                       <div class="info-bottom mb-15">
                         <h3 class="color-white mb-10">{{ project.title }}</h3>
@@ -130,7 +134,11 @@
             <div class="swiper-slide d-flex justify-content-center align-items-center">
               <a href="{{ partner.website|default:'#' }}" target="_blank" style="display:inline-block;">
                 <div class="partner-logo-box">
-                  <img src="{{ partner.logo.url }}" alt="{{ partner.name }}">
+                  {% if partner.logo %}
+                    <img src="{{ partner.logo.url }}" alt="{{ partner.name }}">
+                  {% else %}
+                    <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ partner.name }}">
+                  {% endif %}
                 </div>
               </a>
             </div>

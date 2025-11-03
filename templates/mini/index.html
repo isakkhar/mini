@@ -63,7 +63,7 @@
                                 {% if topic.image %}
                                   <img src="{{ topic.image.url }}" alt="{{ topic.name }}">
                                 {% else %}
-                                  <img src="{% static 'assets/imgs/tags/default.png' %}" alt="{{ topic.name }}">
+                                  <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ topic.name }}">
                                 {% endif %}
                                 <div class="card-info">
                                   <div class="info-bottom">
@@ -92,7 +92,13 @@
               <div class="card-blog-1 hover-up">
                 <div class="card-image mb-20">
                   <a class="post-type" href="{% url 'posts_by_category' category_slug=post.category.slug %}"></a>
-                  <a href="{% url 'post_detail' slug=post.slug %}"><img src="{{ post.image.url }}" alt="Genz"></a>
+                  <a href="{% url 'post_detail' slug=post.slug %}">
+                    {% if post.image %}
+                      <img src="{{ post.image.url }}" alt="Genz">
+                    {% else %}
+                      <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="Genz">
+                    {% endif %}
+                  </a>
                 </div>
                 <div class="card-info">
                   <div class="row">
@@ -147,7 +153,7 @@
         {% if tag.image %}
           <img src="{{ tag.image.url }}" alt="{{ tag.name }}">
         {% else %}
-          <img src="{% static 'assets/imgs/tags/default.png' %}" alt="{{ tag.name }}">
+          <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ tag.name }}">
         {% endif %}
       </a>
     </div>
@@ -172,7 +178,7 @@
                       {% if post.image %}
                         <img src="{{ post.image.url }}" alt="{{ post.title }}">
                       {% else %}
-                        <img src="{% static 'assets/imgs/posts/default.png' %}" alt="{{ post.title }}">
+                        <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}">
                       {% endif %}
                     </a>
                   </div>
@@ -240,8 +246,16 @@
                     <div class="list-posts">
                       {% for post in popular_posts %}
                       <div class="item-post wow animate__animated animate__fadeIn">
-                        <div class="image-post"><a href="{{ post.url }}"><img src="{{ post.image.url }}" alt="Genz"></a></div>
-                        <div class="info-post border-gray-800"><a href="{{ post.url }}">
+                        <div class="image-post">
+                          <a href="{% url 'post_detail' slug=post.slug %}">
+                            {% if post.image %}
+                              <img src="{{ post.image.url }}" alt="Genz">
+                            {% else %}
+                              <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="Genz">
+                            {% endif %}
+                          </a>
+                        </div>
+                        <div class="info-post border-gray-800"><a href="{% url 'post_detail' slug=post.slug %}">
                             <h6 class="color-white">{{ post.title }}</h6></a><span class="color-gray-700">{{ post.read_time }}</span>
                           <ul class="d-inline-block">
                             <li class="color-gray-700">{{ post.date }}</li>
