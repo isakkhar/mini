@@ -23,12 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x*#!3!su#t_97n8zk@4#l*yw9p14%3m1lt$prvu5f29luqa7zc'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-x*#!3!su#t_97n8zk@4#l*yw9p14%3m1lt$prvu5f29luqa7zc')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = ['50.16.211.234', 'localhost']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',') if os.getenv('ALLOWED_HOSTS') else []
 
 
 # Application definition
@@ -79,15 +79,15 @@ WSGI_APPLICATION = 'Company.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# PostgreSQL Database 
+# Database configuration using environment variables
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blog',  
-        'USER': 'admin',  
-        'PASSWORD': 'password',  
-        'HOST': 'localhost', 
-        'PORT': '',
+        'NAME': os.getenv('DB_NAME', 'blog'),
+        'USER': os.getenv('DB_USER', 'postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
 
