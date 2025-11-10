@@ -41,7 +41,26 @@
         <div class="col-lg-8">
           <div class="content-detail border-gray-800">
             <h3 class="color-white mb-30 wow animate__animated animate__fadeIn">Project Details</h3>
-            <p class="text-lg color-gray-500 wow animate__animated animate__fadeIn">{{ project.description }}</p>
+            <div class="text-lg color-gray-500 wow animate__animated animate__fadeIn" style="line-height: 1.8;">
+              {{ project.description|safe|linebreaks }}
+            </div>
+            {% if tech_stack_list %}
+            <h3 class="color-white mt-50 mb-30 wow animate__animated animate__fadeIn">Tech Stack</h3>
+            <div class="tech-stack-container wow animate__animated animate__fadeIn" style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+              {% for tech in tech_stack_list %}
+                <div class="tech-badge" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 50px; padding: 12px 24px; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s ease;">
+                  <span style="color: #e2e8f0; font-size: 15px; font-weight: 500;">{{ tech }}</span>
+                </div>
+              {% endfor %}
+            </div>
+            <style>
+              .tech-badge:hover {
+                transform: translateY(-2px);
+                border-color: #60a5fa !important;
+                box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+              }
+            </style>
+            {% endif %}
             {% if project.link %}
             <h3 class="color-white mt-50 mb-30 wow animate__animated animate__fadeIn">Project Link</h3>
             <p class="text-lg color-gray-500 wow animate__animated animate__fadeIn">
@@ -60,9 +79,14 @@
                 <div class="list-comments">
                   <div class="item-comment border-gray-800 wow animate__animated animate__fadeIn">
                     <p class="color-gray-200 mb-10 text-uppercase">Category</p>
-                    <p class="color-gray-500">{{ project.get_category_display }}</p>
+                    <p class="color-gray-500">{{ project.category|default:"Not specified" }}</p>
                   </div>
-                  <!-- Add more project info fields as needed -->
+                  {% if project.tech_stack %}
+                  <div class="item-comment border-gray-800 wow animate__animated animate__fadeIn">
+                    <p class="color-gray-200 mb-10 text-uppercase">Tech Stack</p>
+                    <p class="color-gray-500">{{ project.tech_stack }}</p>
+                  </div>
+                  {% endif %}
                   <div class="item-comment border-gray-800 wow animate__animated animate__fadeIn">
                     <p class="color-gray-200 mb-10 text-uppercase">Project date</p>
                     <p class="color-gray-500">{{ project.created|date:"d F, Y" }}</p>
@@ -76,14 +100,14 @@
                 </div>
               </div>
             </div>
-            <div class="d-inline-block pt-10 wow animate__animated animate__fadeIn">
+            <!-- <div class="d-inline-block pt-10 wow animate__animated animate__fadeIn">
               <div class="d-flex align-item-center">
                 <h6 class="d-inline-block color-gray-500 mr-10">Share</h6>
                 <a class="icon-media icon-fb" href="#"></a>
                 <a class="icon-media icon-tw" href="#"></a>
                 <a class="icon-media icon-printest" href="#"></a>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>

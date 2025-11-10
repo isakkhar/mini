@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -83,13 +83,15 @@ WSGI_APPLICATION = 'Company.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'blog'),
-        'USER': os.getenv('DB_USER', 'postgres'),
-        'PASSWORD': os.getenv('DB_PASSWORD', '1234'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME': 'blog',          # ← তোমার ডাটাবেসের নাম
+        'USER': 'mini_user',     # ← PostgreSQL ইউজারনেম
+        'PASSWORD': 'mini_pass', # ← PostgreSQL পাসওয়ার্ড
+        'HOST': 'localhost',     # ← সাধারণত localhost
+        'PORT': '5432',          # ← PostgreSQL এর ডিফল্ট পোর্ট
     }
 }
+
+
 
 # SQLite Database (backup - comment out when using PostgreSQL)
 # DATABASES = {

@@ -21,7 +21,7 @@
               <h4 class="color-white mt-20">{{ post.title }}</h4>
             </a>
             <span class="color-gray-700 text-sm">{{ post.published_date|date:"d M Y" }}</span>
-            <p class="color-gray-500 mt-2">{{ post.content|truncatewords:20 }}</p>
+            <p class="color-gray-500 mt-2">{{ post.content|striptags|truncatewords:20 }}</p>
             <div class="mt-2">
               <a class="btn btn-tag bg-gray-800 hover-up" href="{% url 'posts_by_category' category_slug=post.category.slug %}">{{ post.category.name }}</a>
             </div>

@@ -1,0 +1,126 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Custom button for inserting related posts
+    var RelatedPostButton = function(context) {
+        var ui = $.summernote.ui;
+        var button = ui.button({
+            contents: '<i class="fa fa-link"/> রিলেটেড পোস্ট',
+            tooltip: 'রিলেটেড পোস্ট খুঁজুন',
+            click: function() {
+                showPostSearchModal();
+            }
+        });
+        return button.render();
+    };
+
+    $('#id_description').summernote({
+        height: 300,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture']],
+            ['custom', ['relatedPost']],
+            ['view', ['fullscreen', 'codeview', 'help']]
+        ],
+        buttons: {
+            relatedPost: RelatedPostButton
+        }
+    });
+
+    function showPostSearchModal() {
+        var modalHtml = `
+            <div id="postSearchModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center;">
+                <div style="background: white; padding: 30px; border-radius: 10px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-top: 0; color: #333;">রিলেটেড পোস্ট খুঁজুন</h3>
+                    <input type="text" id="postSearchInput" placeholder="পোস্ট টাইটেল লিখুন..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; margin-bottom: 15px; font-size: 16px;">
+                    <div id="searchResults" style="margin-top: 20px;"></div>
+                    <button onclick="closePostSearchModal()" style="margin-top: 20px; padding: 10px 20px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">বন্ধ করুন</button>
+                </div>
+            </div>
+        `;
+        
+        $('body').append(modalHtml);
+        
+        var searchTimeout;
+        $('#postSearchInput').on('input', function() {
+            clearTimeout(searchTimeout);
+            var query = $(this).val();
+            
+            if (query.length >= 2) {
+                searchTimeout = setTimeout(function() {
+                    searchPosts(query);
+                }, 300);
+            } else {
+                $('#searchResults').html('');
+            }
+        });
+        
+        $('#postSearchInput').focus();
+    }
+
+    function searchPosts(query) {
+        $.ajax({
+            url: "{% url 'search_posts' %}",
+            method: "GET",
+            data: { q: query },
+            success: function(response) {
+                displaySearchResults(response.posts);
+            },
+            error: function(error) {
+                console.error('Search failed:', error);
+                $('#searchResults').html('<p style="color: #999;">খুঁজতে সমস্যা হয়েছে</p>');
+            }
+        });
+    }
+
+    function displaySearchResults(posts) {
+        var resultsHtml = '';
+        
+        if (posts.length === 0) {
+            resultsHtml = '<p style="color: #999; text-align: center;">কোন পোস্ট পাওয়া যায়নি</p>';
+        } else {
+            resultsHtml = '<div style="max-height: 300px; overflow-y: auto;">';
+            posts.forEach(function(post) {
+                resultsHtml += `
+                    <div onclick="insertPostLink('${post.url}', '${post.title.replace(/'/g, "\\'")}')" 
+                         style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 5px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s;"
+                         onmouseover="this.style.background='#f5f5f5'; this.style.borderColor='#0ea5e9';"
+                         onmouseout="this.style.background='white'; this.style.borderColor='#e0e0e0';">
+                        <strong style="color: #333; display: block; margin-bottom: 5px;">${post.title}</strong>
+                        <small style="color: #0ea5e9;">${post.url}</small>
+                    </div>
+                `;
+            });
+            resultsHtml += '</div>';
+        }
+        
+        $('#searchResults').html(resultsHtml);
+    }
+
+    window.insertPostLink = function(url, title) {
+        $('#id_description').summernote('createLink', {
+            text: title,
+            url: url,
+            isNewWindow: false
+        });
+        closePostSearchModal();
+    };
+
+    window.closePostSearchModal = function() {
+        $('#postSearchModal').remove();
+    };
+});
+</script>
+{% endblock %}

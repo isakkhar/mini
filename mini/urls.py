@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from mini.views import home, about, post_detail, posts_by_author, posts_by_category, posts_by_tag, contact, portfolio, portfolio_detail, category
+from mini.views import home, about, post_detail, posts_by_author, posts_by_category, posts_by_tag, contact, portfolio, portfolio_detail, category, search, upload_image, search_posts, subscribe
 
 urlpatterns = [
     path('', home, name='home'),
@@ -14,6 +14,9 @@ urlpatterns = [
     path('portfolio/<slug:slug>/', portfolio_detail, name='portfolio_detail'),
     path('category/', category, name='category'),
     path('blog/', views.BlogListView.as_view(), name='blog-list'),
-
+    path('search/', search, name='search'),
+    path('upload-image/', upload_image, name='upload_image'),
+    path('search-posts/', search_posts, name='search_posts'),
+    path('subscribe/', subscribe, name='subscribe'),
 
 ]

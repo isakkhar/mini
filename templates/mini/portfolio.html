@@ -7,37 +7,58 @@
   <div class="row">
     <div class="col-xl-10 col-lg-12 m-auto">
       <div class="text-center mt-70 mb-50">
-        <h2 class="color-linear d-inline-block mb-20">My Latest Projects</h2>
-        <p class="text-lg color-gray-500">The convention is the main event of the year for professionals in<br class="d-none d-lg-block">the world of design and architecture.</p>
+        <h2 class="color-linear d-inline-block mb-20">{{ site_settings.portfolio_title|default:"My Latest Projects" }}</h2>
+        <p class="text-lg color-gray-500">{{ site_settings.portfolio_description|default:"The convention is the main event of the year for professionals in the world of design and architecture." }}</p>
       </div>
       <div class="row text-center filter-nav">
         <div class="col-lg-12">
           <span class="btn btn-border-linear btn-filter hover-up" data-filter="">All</span>
-          {% for code, name in categories %}
-            <span class="btn btn-border-linear btn-filter hover-up" data-filter="{{ code }}">{{ name }}</span>
+          {% for category in portfolio_categories %}
+            <span class="btn btn-border-linear btn-filter hover-up" data-filter="{{ category }}">{{ category }}</span>
           {% endfor %}
         </div>
       </div>
       <div class="mt-70">
         <div class="row">
           {% for project in projects %}
-          <div class="col-lg-6 project" data-category="{{ project.category }}">
-            <div class="item-content">
-              <div class="card-style-1 hover-up mb-30">
-                <div class="card-image">
-                  <a class="link-post" href="{% url 'portfolio_detail' slug=project.slug %}">
-                    {% if project.image %}
-                      <img src="{{ project.image.url }}" alt="{{ project.title }}">
-                    {% else %}
-                      <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ project.title }}">
-                    {% endif %}
-                    <div class="card-info card-bg-2">
-                      <div class="info-bottom mb-15">
-                        <h3 class="color-white mb-10">{{ project.title }}</h3>
-                        <p class="color-gray-500 text-sm">{{ project.description|truncatewords:20 }}</p>
-                      </div>
-                    </div>
-                  </a>
+          <div class="col-lg-6 project mb-30" data-category="{{ project.category }}">
+            <div class="portfolio-card hover-up wow animate__animated animate__fadeIn" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 20px; overflow: hidden; height: 100%; display: flex; flex-direction: column; position: relative;">
+              <div class="card-image-wrapper" style="position: relative; width: 100%; height: 300px; overflow: hidden;">
+                <a href="{% url 'portfolio_detail' slug=project.slug %}">
+                  {% if project.image %}
+                    <img src="{{ project.image.url }}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                  {% else %}
+                    <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ project.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
+                  {% endif %}
+                </a>
+                {% if project.category %}
+                <div class="category-badge" style="position: absolute; top: 15px; left: 15px;">
+                  <span style="background: rgba(14, 165, 234, 0.9); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px); display: inline-block;">
+                    {{ project.category }}
+                  </span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="card-content" style="padding: 25px; flex-grow: 1; display: flex; flex-direction: column;">
+                <a href="{% url 'portfolio_detail' slug=project.slug %}">
+                  <h4 class="color-white mb-15" style="font-size: 20px; line-height: 1.4; min-height: 56px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 600;">
+                    {{ project.title }}
+                  </h4>
+                </a>
+                <p class="color-gray-500 text-sm mb-20" style="line-height: 1.6; min-height: 60px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">
+                  {{ project.description|striptags|truncatewords:20 }}
+                </p>
+                <div class="card-footer mt-auto" style="padding-top: 15px; border-top: 1px solid #334155;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="color-gray-600 text-xs" style="font-size: 12px;">
+                      <i class="fi-rr-calendar" style="margin-right: 5px;"></i>
+                      {{ project.created|date:"d M Y" }}
+                    </span>
+                    <a href="{% url 'portfolio_detail' slug=project.slug %}" class="view-project-btn" style="color: #0ea5ea; font-size: 13px; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 5px;">
+                      View Details
+                      <i class="fi-rr-arrow-small-right"></i>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -47,6 +68,24 @@
           {% endfor %}
         </div>
       </div>
+      
+      <!-- Custom Portfolio Card Styles -->
+      <style>
+        .portfolio-card {
+          transition: all 0.3s ease;
+        }
+        .portfolio-card:hover {
+          transform: translateY(-5px);
+          border-color: #0ea5ea !important;
+          box-shadow: 0 10px 30px rgba(14, 165, 234, 0.2);
+        }
+        .portfolio-card:hover .card-image-wrapper img {
+          transform: scale(1.05);
+        }
+        .view-project-btn:hover {
+          color: #38bdf8 !important;
+        }
+      </style>
       <!-- You can add pagination and other sections as needed -->
     </div>
   </div>

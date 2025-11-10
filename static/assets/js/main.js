@@ -129,15 +129,13 @@
             spaceBetween: 20,
             slidesPerView: 5,
             slidesPerGroup: 1,
-            loop: true,
+            loop: false,
             navigation: {
                 nextEl: ".swiper-button-next-style-1",
                 prevEl: ".swiper-button-prev-style-1"
             },
 
-            autoplay: {
-                delay: 3000
-            },
+            autoplay: false,
             breakpoints: {
                 1299: {
                     slidesPerView: 5

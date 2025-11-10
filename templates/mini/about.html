@@ -6,26 +6,25 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <h1 class="color-linear mb-4">About Me</h1>
+      <h1 class="color-linear mb-4">{{ about_page.title|default:"About Me" }}</h1>
       <p class="color-gray-500 lead mb-4">
-        Welcome to my blog! My name is <strong>Sakkhar</strong>, and I am passionate about sharing knowledge, ideas, and inspiration on technology, travel, lifestyle, and more.
+        {{ about_page.intro|default:"Welcome to my blog! My name is Sakkhar, and I am passionate about sharing knowledge, ideas, and inspiration on technology, travel, lifestyle, and more." }}
       </p>
       <p class="color-gray-500 mb-4">
-        I use animation as a third dimension by which to simplify experiences and guide you through each and every interaction. I’m not adding motion just to spruce things up, but doing it in ways that make your experience better.
+        {{ about_page.content_1|default:"I use animation as a third dimension by which to simplify experiences and guide you through each and every interaction. I'm not adding motion just to spruce things up, but doing it in ways that make your experience better." }}
       </p>
       <p class="color-gray-500 mb-4">
-        On this blog, you'll find editor's picks, hot topics, and the latest posts from a variety of categories. Whether you're here for tips, reviews, or just to explore, I hope you enjoy your stay!
+        {{ about_page.content_2|default:"On this blog, you'll find editor's picks, hot topics, and the latest posts from a variety of categories. Whether you're here for tips, reviews, or just to explore, I hope you enjoy your stay!" }}
       </p>
-      <!-- <div class="text-center mt-5 mb-5">
-        <img src="{% static 'assets/imgs/template/logo.png' %}" alt="Logo" style="max-width: 120px;">
-      </div> -->
 
       <!-- Resume Download -->
+      {% if about_page.resume_file %}
       <div class="text-center mb-5">
-        <a href="{% static 'assets/docs/resume.pdf' %}" class="btn btn-linear btn-radius-8" download>
+        <a href="{{ about_page.resume_file.url }}" class="btn btn-linear btn-radius-8" download>
           <i class="fi-rr-download"></i> Download Resume
         </a>
       </div>
+      {% endif %}
 
       <!-- Education Timeline -->
       <h2 class="color-linear mb-4 mt-5">Education</h2>

@@ -1,6 +1,6 @@
 {% extends 'mini/base.html' %}
 {% load static %}
-{% block title %}All Blog Posts{% endblock %}
+{% block title %}All Blog Posts - {{ site_settings.site_name|default:"Personal Blog" }}{% endblock %}
 
 {% block content %}
 <main class="main">
@@ -9,16 +9,19 @@
       <div class="row">
         <div class="col-xl-1"></div>
         <div class="col-xl-10 col-lg-12">
-          <div class="row align-items-end mt-50">
+          <!-- Hero Section -->
+          <div class="row align-items-end mt-50 mb-40">
             <div class="col-lg-7 mb-20">
               <div class="d-inline-block position-relative">
-                <h1 class="color-white mb-20 color-linear wow animate__animated animate__fadeIn">
-                  All Blog Posts
+                <h1 class="color-linear mb-20 wow animate__animated animate__fadeInUp" style="font-size: 48px; font-weight: 700;">
+                  📚 All Blog Posts
                 </h1>
-                <span class="btcren btn-linear-small btn-number-arts">{{ posts|length }} articles</span>
+                <span class="btn-linear-small btn-number-arts wow animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                  {{ posts|length }} articles
+                </span>
               </div>
-              <p class="color-gray-500 text-base wow animate__animated animate__fadeIn">
-                Discover all our latest blog posts and articles.
+              <p class="color-gray-500 text-lg mt-20 wow animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                Explore our collection of insightful articles, tutorials, and stories.
               </p>
             </div>
             <div class="col-lg-5 mb-20 text-start text-lg-end">
@@ -34,89 +37,151 @@
             </div>
           </div>
           
+          <!-- Posts Grid -->
           <div class="box-list-posts mt-40">
             <div class="row">
-              <div class="col-lg-8">
-                {% for post in posts %}
-                <div class="card-blog-1 card-blog-2 hover-up wow animate__animated animate__fadeIn">
-                  <div class="card-image mb-20">
-                    <a href="{% url 'post_detail' slug=post.slug %}">
-                      {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                      {% else %}
-                        <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}">
-                      {% endif %}
-                    </a>
-                  </div>
-                  <div class="card-info">
-                    <a href="{% url 'post_detail' slug=post.slug %}">
-                      <h4 class="color-white mt-30">{{ post.title }}</h4>
-                    </a>
-                    <p class="mt-25 text-lg color-gray-700">{{ post.content|truncatewords:30 }}</p>
-                    
-                    <div class="row align-items-center mt-45">
-                      <div class="col-7">
-                        <div class="box-author">
-                          {% if post.author.profile_image %}
-                            <img src="{{ post.author.profile_image.url }}" alt="{{ post.author.name }}">
+              <div class="col-lg-9">
+                <div class="row">
+                  {% for post in posts %}
+                  <div class="col-lg-4 col-md-6 mb-30 wow animate__animated animate__fadeIn">
+                    <div class="card-blog-1 hover-up" style="display: flex; flex-direction: column; height: 420px; overflow: hidden;">
+                      <!-- Post Image - Square -->
+                      <div class="card-image" style="flex-shrink: 0;">
+                        <a href="{% url 'post_detail' slug=post.slug %}">
+                          {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
                           {% else %}
-                            <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.author.name }}">
+                            <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
                           {% endif %}
-                          <div class="author-info">
-                            <h6 class="color-gray-700">{{ post.author.name }}</h6>
-                            <span class="color-gray-700 text-sm">{{ post.published_date|date:"d M Y" }}</span>
+                        </a>
+                      </div>
+                      
+                      <!-- Card Content -->
+                      <div class="card-info" style="display: flex; flex-direction: column; flex-grow: 1; padding: 20px; justify-content: space-between;">
+                        <div>
+                          <!-- Category Badge -->
+                          <a class="btn btn-tag bg-gray-800 hover-up" href="{% url 'posts_by_category' category_slug=post.category.slug %}" style="display: inline-block; width: fit-content; margin-bottom: 10px; font-size: 11px; padding: 4px 12px;">
+                            {{ post.category.name }}
+                          </a>
+                          
+                          <!-- Title -->
+                          <a href="{% url 'post_detail' slug=post.slug %}">
+                            <h6 class="color-white mb-10" style="font-size: 16px; line-height: 1.3; height: 42px; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                              {{ post.title }}
+                            </h6>
+                          </a>
+                          
+                          <!-- Excerpt -->
+                          <p class="color-gray-500 mb-15" style="font-size: 13px; line-height: 1.5; height: 60px; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                            {{ post.content|striptags|truncatewords:12 }}
+                          </p>
+                        </div>
+                        
+                        <!-- Meta Info -->
+                        <div class="border-top border-gray-800 pt-12" style="margin-top: auto;">
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center" style="gap: 8px; min-width: 0; flex: 1;">
+                              {% if post.author.profile_image %}
+                                <img src="{{ post.author.profile_image.url }}" alt="{{ post.author.name }}" style="width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;">
+                              {% else %}
+                                <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.author.name }}" style="width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;">
+                              {% endif %}
+                              <div style="min-width: 0; flex: 1;">
+                                <span class="color-gray-700 d-block" style="font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ post.author.name }}</span>
+                                <span class="color-gray-700" style="font-size: 10px;">{{ post.published_date|date:"M d, Y" }}</span>
+                              </div>
+                            </div>
+                            <a class="readmore color-gray-500" href="{% url 'post_detail' slug=post.slug %}" style="text-decoration: none; flex-shrink: 0; margin-left: 10px;">
+                              <i class="fi-rr-arrow-small-right" style="font-size: 18px;"></i>
+                            </a>
                           </div>
                         </div>
                       </div>
-                      <div class="col-5 text-end">
-                        <span class="color-gray-500 text-sm">{{ post.category.name }}</span>
-                      </div>
                     </div>
                   </div>
+                  {% empty %}
+                  <div class="col-12">
+                    <div class="text-center bg-gray-850 border-gray-800" style="padding: 60px 20px; border-radius: 16px;">
+                      <i class="fi-rr-document color-gray-500" style="font-size: 64px; margin-bottom: 20px;"></i>
+                      <h4 class="color-white mb-10">No blog posts available</h4>
+                      <p class="color-gray-500">Check back later for new content!</p>
+                    </div>
+                  </div>
+                  {% endfor %}
                 </div>
-                {% empty %}
-                <div class="text-center color-gray-500 mt-50">
-                  <h4>No blog posts available</h4>
-                  <p>Check back later for new content!</p>
-                </div>
-                {% endfor %}
               </div>
               
-              <div class="col-lg-4">
-                <div class="sidebar">
+              <!-- Sidebar -->
+              <div class="col-lg-3">
+                <div class="sidebar sticky-top" style="top: 100px;">
+                  
+                  <!-- Search Box -->
+                  <div class="box-sidebar bg-gray-850 border-gray-800 mb-30">
+                    <div class="head-sidebar wow animate__animated animate__fadeIn">
+                      <h5 class="line-bottom">🔍 Search Posts</h5>
+                    </div>
+                    <div class="content-sidebar">
+                      <form action="{% url 'search' %}" method="GET">
+                        <div class="form-group" style="position: relative;">
+                          <input class="form-control" type="text" name="q" placeholder="Search articles..." style="padding: 12px 45px 12px 15px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; color: #fff;">
+                          <button type="submit" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: #0ea5e9; cursor: pointer;">
+                            <i class="fi-rr-search"></i>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  
                   <!-- Categories Widget -->
-                  <div class="box-sidebar bg-gray-850 border-gray-800">
-                    <div class="head-sidebar">
-                      <h5 class="line-bottom">Categories</h5>
+                  <div class="box-sidebar bg-gray-850 border-gray-800 mb-30">
+                    <div class="head-sidebar wow animate__animated animate__fadeIn">
+                      <h5 class="line-bottom">📂 Categories</h5>
                     </div>
                     <div class="content-sidebar">
                       <div class="list-cats">
                         {% for category in categories %}
-                        <div class="item-cats border-gray-800 wow animate__animated animate__fadeIn">
+                        <div class="item-cats border-gray-800 wow animate__animated animate__fadeIn hover-up" style="transition: all 0.3s ease; cursor: pointer;">
                           <div class="cat-left">
                             <div class="image-cat">
                               <a href="{% url 'posts_by_category' category_slug=category.slug %}">
                                 {% if category.image %}
-                                  <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                                  <img src="{{ category.image.url }}" alt="{{ category.name }}" style="border-radius: 8px;">
                                 {% else %}
-                                  <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ category.name }}">
+                                  <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ category.name }}" style="border-radius: 8px;">
                                 {% endif %}
                               </a>
                             </div>
                             <div class="info-cat">
-                              <a class="color-gray-500 text-xl" href="{% url 'posts_by_category' category_slug=category.slug %}">{{ category.name }}</a>
+                              <a class="color-gray-500 text-base" href="{% url 'posts_by_category' category_slug=category.slug %}" style="text-decoration: none;">{{ category.name }}</a>
                             </div>
                           </div>
                           <div class="cat-right">
-                            <a class="btn btn-small text-sm color-gray-500 bg-gray-800" href="{% url 'posts_by_category' category_slug=category.slug %}">
+                            <span class="btn btn-small text-sm color-gray-500 bg-gray-800" style="border-radius: 20px; padding: 5px 15px;">
                               {{ category.posts.count }}
-                            </a>
+                            </span>
                           </div>
                         </div>
                         {% endfor %}
                       </div>
                     </div>
                   </div>
+                  
+                  <!-- Popular Tags -->
+                  <div class="box-sidebar bg-gray-850 border-gray-800">
+                    <div class="head-sidebar wow animate__animated animate__fadeIn">
+                      <h5 class="line-bottom">🏷️ Popular Tags</h5>
+                    </div>
+                    <div class="content-sidebar">
+                      <div class="d-flex flex-wrap gap-2" style="gap: 10px;">
+                        {% for tag in tags|slice:":10" %}
+                          <a href="{% url 'posts_by_tag' tag_slug=tag.slug %}" class="btn btn-tag bg-gray-800 hover-up" style="display: inline-block; padding: 8px 16px; border-radius: 20px; text-decoration: none; transition: all 0.3s;">
+                            #{{ tag.name }}
+                          </a>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
               </div>
             </div>

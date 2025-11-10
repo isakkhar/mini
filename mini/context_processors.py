@@ -1,5 +1,12 @@
-from .models import SiteSetting
+from .models import SiteSetting, Category, Tag
 
 def site_settings(request):
     settings = SiteSetting.objects.first()
-    return {'site_settings': settings}
+    categories = Category.objects.all()
+    tags = Tag.objects.all()
+    
+    return {
+        'site_settings': settings,
+        'categories': categories,
+        'tags': tags,
+    }

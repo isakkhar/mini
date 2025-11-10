@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.views.generic import ListView
-from .models import Post, Author, Category, Tag, Comment, Portfolio, Service, Testimonial, Partner, Education, Experience
+from .models import Post, Author, Category, Tag, Comment, Portfolio, Service, Testimonial, Partner, Education, Experience, SiteSetting, AboutPage, ContactPage, Subscriber
 from .forms import CommentForm, ContactForm  # You'll create this form
 # from mini.views import home, about, post_detail, posts_by_author, posts_by_category, posts_by_tag
 
@@ -32,14 +32,15 @@ def home(request):
         'last_comments': last_comments,
         'instagram_gallery': instagram_gallery,
         'hot_topics': hot_topics,
-        'hot_topics_description': "Your hot topics description here",
     }
     return render(request, 'mini/index.html', context)
 
 def about(request):
+    about_page = AboutPage.objects.first()
     educations = Education.objects.all().order_by('-end_year')
     experiences = Experience.objects.all().order_by('-end_year')
     return render(request, 'mini/about.html', {
+        'about_page': about_page,
         'educations': educations,
         'experiences': experiences,
     })
@@ -112,6 +113,7 @@ def posts_by_tag(request, tag_slug):
     })
 
 def contact(request):
+    contact_page = ContactPage.objects.first()
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -120,17 +122,21 @@ def contact(request):
             return redirect('contact')
     else:
         form = ContactForm()
-    return render(request, 'mini/contact.html', {'form': form})
+    return render(request, 'mini/contact.html', {
+        'form': form,
+        'contact_page': contact_page
+    })
 
 def portfolio(request):
     projects = Portfolio.objects.all().order_by('-created')
-    categories = Portfolio.CATEGORY_CHOICES
+    # Get unique categories from existing portfolios
+    portfolio_categories = Portfolio.objects.exclude(category='').values_list('category', flat=True).distinct().order_by('category')
     services = Service.objects.all()
     testimonials = Testimonial.objects.all()
     partners = Partner.objects.all()
     return render(request, 'mini/portfolio.html', {
         'projects': projects,
-        'categories': categories,
+        'portfolio_categories': portfolio_categories,
         'services': services,
         'testimonials': testimonials,
         'partners': partners,
@@ -138,7 +144,11 @@ def portfolio(request):
 
 def portfolio_detail(request, slug):
     project = get_object_or_404(Portfolio, slug=slug)
-    return render(request, 'mini/portfolio_detail.html', {'project': project})
+    tech_stack_list = [tech.strip() for tech in project.tech_stack.split(',') if tech.strip()] if project.tech_stack else []
+    return render(request, 'mini/portfolio_detail.html', {
+        'project': project,
+        'tech_stack_list': tech_stack_list
+    })
 
 
 def category(request):
@@ -151,7 +161,100 @@ class BlogListView(ListView):
     context_object_name = 'posts'
     paginate_by = 10
     
+    def get_queryset(self):
+        return Post.objects.filter(status='published').order_by('-published_date')
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
+        context['tags'] = Tag.objects.all()
         return context
+
+def search(request):
+    query = request.GET.get('q', '')
+    results = []
+    
+    if query:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(category__name__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct().order_by('-created_date')
+    
+    popular_tags = Tag.objects.all()[:10]
+    
+    return render(request, 'mini/search_results.html', {
+        'query': query,
+        'results': results,
+        'popular_tags': popular_tags,
+        'total_results': results.count() if results else 0
+    })
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+import os
+
+@csrf_exempt
+def upload_image(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+        
+        # Generate unique filename
+        ext = file.name.split('.')[-1]
+        filename = f"post_images/{file.name}"
+        
+        # Save file
+        path = default_storage.save(filename, ContentFile(file.read()))
+        file_url = default_storage.url(path)
+        
+        return JsonResponse(file_url, safe=False)
+    
+    return JsonResponse({'error': 'No file uploaded'}, status=400)
+
+@csrf_exempt
+def search_posts(request):
+    """Search posts for inserting related links in editor"""
+    query = request.GET.get('q', '')
+    posts = []
+    
+    if query and len(query) >= 2:
+        results = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query)
+        ).values('id', 'title', 'slug')[:10]
+        
+        posts = [
+            {
+                'id': post['id'],
+                'title': post['title'],
+                'url': f"/post/{post['slug']}/"
+            }
+            for post in results
+        ]
+    
+    return JsonResponse({'posts': posts})
+
+@csrf_exempt
+def subscribe(request):
+    """Handle email subscription"""
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        
+        if not email:
+            return JsonResponse({'success': False, 'message': 'Please enter an email address.'})
+        
+        # Check if already subscribed
+        if Subscriber.objects.filter(email=email).exists():
+            return JsonResponse({'success': False, 'message': 'This email is already subscribed!'})
+        
+        # Create new subscriber
+        try:
+            Subscriber.objects.create(email=email)
+            return JsonResponse({'success': True, 'message': 'Successfully subscribed! Thank you.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': 'An error occurred. Please try again.'})
+    
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})

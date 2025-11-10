@@ -10,7 +10,7 @@
         <div class="col-xl-10 col-lg-12">
           <div class="row align-items-end mt-50">
             <div class="col-lg-7 mb-20">
-              <div class="d-inline-block position-relative">
+              <div class="d-inline-block position-relative"></div>
                 <h1 class="color-white mb-20 color-linear wow animate__animated animate__fadeIn">
                   {{ category.name }}
                 </h1>
@@ -35,47 +35,55 @@
           <div class="box-list-posts mt-40">
             <div class="row">
               <div class="col-lg-8">
-                {% for post in posts %}
-                <div class="card-blog-1 card-blog-2 hover-up wow animate__animated animate__fadeIn">
-                  <div class="card-image mb-20">
-                    <a href="{% url 'post_detail' slug=post.slug %}">
-                      {% if post.image %}
-                        <img src="{{ post.image.url }}" alt="{{ post.title }}">
-                      {% else %}
-                        <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}">
-                      {% endif %}
-                    </a>
-                  </div>
-                  <div class="card-info">
-                    <a href="{% url 'post_detail' slug=post.slug %}">
-                      <h4 class="color-white mt-30">{{ post.title }}</h4>
-                    </a>
-                    <p class="mt-25 text-lg color-gray-700">{{ post.content|truncatewords:30 }}</p>
-                    <div class="row align-items-center mt-45">
-                      <div class="col-7">
-                        <div class="box-author">
-                          {% if post.author.profile_image %}
-                            <img src="{{ post.author.profile_image.url }}" alt="{{ post.author.name }}">
+                <div class="row">
+                  {% for post in posts %}
+                  <div class="col-lg-6 col-md-6 mb-30">
+                    <div class="category-card hover-up wow animate__animated animate__fadeIn" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 20px; overflow: hidden; height: 100%; display: flex; flex-direction: column; position: relative;">
+                      <div class="card-image-wrapper" style="position: relative; width: 100%; height: 280px; overflow: hidden;">
+                        <a href="{% url 'post_detail' slug=post.slug %}">
+                          {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
                           {% else %}
-                            <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.author.name }}">
+                            <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;">
                           {% endif %}
-                          <div class="author-info">
-                            <h6 class="color-gray-700">{{ post.author.name }}</h6>
-                            <span class="color-gray-700 text-sm">{{ post.published_date|date:"d M Y" }}</span>
+                        </a>
+                        <div class="category-badge" style="position: absolute; top: 15px; left: 15px;">
+                          <a class="btn btn-tag-sm" href="{% url 'posts_by_category' category_slug=post.category.slug %}" style="background: rgba(14, 165, 234, 0.9); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; backdrop-filter: blur(10px);">
+                            {{ post.category.name }}
+                          </a>
+                        </div>
+                      </div>
+                      <div class="card-content" style="padding: 25px; flex-grow: 1; display: flex; flex-direction: column;">
+                        <a href="{% url 'post_detail' slug=post.slug %}">
+                          <h5 class="color-white mb-15" style="font-size: 18px; line-height: 1.4; min-height: 50px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: 600;">
+                            {{ post.title }}
+                          </h5>
+                        </a>
+                        <p class="color-gray-500 text-sm mb-20" style="line-height: 1.6; min-height: 60px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px;">
+                          {{ post.content|striptags|truncatewords:15 }}
+                        </p>
+                        <div class="card-footer mt-auto" style="padding-top: 15px; border-top: 1px solid #334155;">
+                          <div class="box-author" style="display: flex; align-items: center; gap: 12px;">
+                            {% if post.author.profile_image %}
+                              <img src="{{ post.author.profile_image.url }}" alt="{{ post.author.name }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #334155;">
+                            {% else %}
+                              <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.author.name }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #334155;">
+                            {% endif %}
+                            <div class="author-info">
+                              <h6 class="color-gray-400 text-sm mb-0" style="font-size: 13px; font-weight: 500;">{{ post.author.name }}</h6>
+                              <span class="color-gray-600 text-xs" style="font-size: 12px;">{{ post.published_date|date:"d M Y" }} • {{ post.read_time }}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                      <div class="col-5 text-end">
-                        <a class="readmore color-gray-500 text-sm" href="{% url 'post_detail' slug=post.slug %}">
-                          <span>Read more</span>
-                        </a>
-                      </div>
                     </div>
                   </div>
+                  {% empty %}
+                  <div class="col-12">
+                    <p class="color-gray-500 text-center">No posts found in this category.</p>
+                  </div>
+                  {% endfor %}
                 </div>
-                {% empty %}
-                <p class="color-gray-500">No posts found in this category.</p>
-                {% endfor %}
               </div>
               <div class="col-lg-4">
                 <div class="sidebar">
@@ -145,6 +153,24 @@
               </div>
             </div>
           </div>
+          <!-- Custom Card Styles -->
+          <style>
+            .category-card {
+              transition: all 0.3s ease;
+            }
+            .category-card:hover {
+              transform: translateY(-5px);
+              border-color: #0ea5ea !important;
+              box-shadow: 0 10px 30px rgba(14, 165, 234, 0.2);
+            }
+            .category-card:hover .card-image-wrapper img {
+              transform: scale(1.05);
+            }
+            .btn-tag-sm:hover {
+              background: rgba(14, 165, 234, 1) !important;
+            }
+          </style>
+          
           <!-- Pagination below posts list -->
           <nav class="mb-50 mt-30">
             <ul class="pagination">

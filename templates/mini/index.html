@@ -10,30 +10,45 @@
         <div class="banner">
           <div class="row align-items-end">
             <div class="col-lg-6 pt-100">
-              <span class="text-sm-bold color-gray-600 wow animate__animated animate__fadeInUp">Hello Everyone!</span>
+              <span class="text-sm-bold color-gray-600 wow animate__animated animate__fadeInUp">
+                {{ site_settings.banner_greeting|default:"Hello Everyone!" }}
+              </span>
               <h3 class="color-gray-50 mt-20 mb-20 wow animate__animated animate__fadeInUp">
-                I’m
-                <a class="typewrite color-linear" href="#" data-period="3000" data-type='[ "Sakkhar", "Project Manager", "Scrum Master" ]'></a>
+                I'm
+                <a class="typewrite color-linear" href="#" data-period="3000" data-type='{{ site_settings.banner_roles|default:"[ \"Designer\", \"Developer\", \"Creator\" ]" }}'></a>
               </h3>
               <div class="row">
                 <div class="col-lg-9">
                   <p class="text-base color-gray-600 wow animate__animated animate__fadeInUp">
-                    I use animation as a third dimension by which to simplify experiences and guiding through each and every interaction. I’m not adding motion just to spruce things up, but doing it in ways that make your experience better.
+                    {{ site_settings.banner_description|default:"I use animation as a third dimension by which to simplify experiences and guiding through each and every interaction." }}
                   </p>
                 </div>
               </div>
               <div class="box-subscriber mt-40 mb-50 wow animate__animated animate__fadeInUp">
-                <div class="inner-subscriber bg-gray-800">
-                  <form class="d-flex" action="#">
-                    <input class="input-sybscriber" type="text" placeholder="Type your email address">
-                    <button class="btn btn-linear btn-arrow-right">Subscribe<i class="fi-rr-arrow-small-right"></i></button>
+                <div class="inner-subscriber bg-gray-800" style="padding: 20px; border-radius: 12px;">
+                  <form class="d-flex" id="subscribeForm" style="gap: 10px; align-items: stretch;">
+                    {% csrf_token %}
+                    <input class="input-sybscriber" type="email" name="email" id="subscribeEmail" 
+                           placeholder="{{ site_settings.subscribe_placeholder|default:'Type your email address' }}" 
+                           required
+                           style="flex: 1; padding: 15px 20px; border: 1px solid #374151; border-radius: 8px; background: #1f2937; color: #fff; font-size: 15px; outline: none; min-width: 0;">
+                    <button class="btn btn-linear btn-arrow-right" type="submit" 
+                            style="padding: 15px 30px; white-space: nowrap; border-radius: 8px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                      <span>{{ site_settings.subscribe_button_text|default:"Subscribe" }}</span>
+                      <i class="fi-rr-arrow-small-right"></i>
+                    </button>
                   </form>
+                  <div id="subscribeMessage" style="margin-top: 15px; display: none;"></div>
                 </div>
               </div>
             </div>
             <div class="col-lg-6 text-center">
               <div class="banner-img position-relative wow animate__animated animate__fadeIn">
-                <img src="{% static 'assets/imgs/page/homepage1/banner.png' %}" alt="Genz">
+                {% if site_settings.banner_image %}
+                  <img src="{{ site_settings.banner_image.url }}" alt="Genz">
+                {% else %}
+                  <img src="{% static 'assets/imgs/page/homepage1/banner.png' %}" alt="Genz">
+                {% endif %}
                 <div class="pattern-1"><img src="{% static 'assets/imgs/template/pattern-1.svg' %}" alt="Genz"></div>
                 <div class="pattern-2"><img src="{% static 'assets/imgs/template/pattern-2.svg' %}" alt="Genz"></div>
                 <div class="pattern-3"><img src="{% static 'assets/imgs/template/pattern-3.svg' %}" alt="Genz"></div>
@@ -47,9 +62,12 @@
             <div class="box-topics border-gray-800 bg-gray-850">
               <div class="row">
                 <div class="col-lg-2">
-                  <h5 class="mb-15 color-white wow animate__animated animate__fadeInUp">Hot topics</h5>
-                  <p class="color-gray-500 mb-20 wow animate__animated animate__fadeInUp">{{ hot_topics_description }}</p>
-                  ...
+                  <h5 class="mb-15 color-white wow animate__animated animate__fadeInUp">
+                    {{ site_settings.hot_topics_title|default:"Hot topics" }}
+                  </h5>
+                  <p class="color-gray-500 mb-20 wow animate__animated animate__fadeInUp">
+                    {{ site_settings.hot_topics_description|default:"Don't miss the trending topics" }}
+                  </p>
                 </div>
                 <div class="col-lg-10">
                   <div class="box-swiper">
@@ -115,17 +133,22 @@
                   <div class="row align-items-center mt-25">
                     <div class="col-7">
                       <div class="box-author">
-                        <img src="{% static post.author.image %}" alt="Genz">
+                        {% if post.author.profile_image %}
+                          <img src="{{ post.author.profile_image.url }}" alt="{{ post.author.name }}">
+                        {% else %}
+                          <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.author.name }}">
+                        {% endif %}
                         <div class="author-info">
                           <h6 class="color-gray-700">{{ post.author.name }}</h6>
-                          <span class="color-gray-700 text-sm">{{ post.date }}</span>
+                          <span class="color-gray-700 text-sm">{{ post.published_date|date:"M d, Y"|default:"Draft" }}</span>
                         </div>
                       </div>
                     </div>
                     <div class="col-5 text-end">
                       <a class="readmore color-gray-500 text-sm" href="{% url 'post_detail' slug=post.slug %}">
-    <span>Read more</span>
-  </a>
+                        <span>Read more</span>
+                        <i class="fi-rr-arrow-small-right"></i>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -275,12 +298,12 @@
                     <div class="list-comments">
                       {% for comment in last_comments %}
 <div class="item-comment border-gray-800 wow animate__animated animate__fadeIn">
-  <p class="color-gray-500 mb-20">“ {{ comment.text }} “</p>
+  <p class="color-gray-500 mb-20">" {{ comment.body }} "</p>
   <div class="box-author-small">
-    <img src="{% static comment.author.image %}" alt="Genz">
+    <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ comment.name }}">
     <div class="author-info">
-      <span class="d-block color-gray-700 text-sm">{{ comment.author.name }}</span>
-      <span class="color-gray-700 text-xs">{{ comment.date }}</span>
+      <span class="d-block color-gray-700 text-sm">{{ comment.name }}</span>
+      <span class="color-gray-700 text-xs">{{ comment.created|date:"M d, Y" }}</span>
     </div>
   </div>
 </div>
@@ -289,7 +312,7 @@
                   </div>
                 </div>
                 <!-- Instagram Gallery -->
-                <div class="box-sidebar bg-gray-850 border-gray-800">
+                <!-- <div class="box-sidebar bg-gray-850 border-gray-800">
                   <div class="head-sidebar"><a href="index.html"><img src="{% static 'assets/imgs/template/logo.svg' %}" alt="Genz"></a>
                     <h6 class="color-gray-700">Follow us on instagram</h6>
                   </div>
@@ -302,7 +325,7 @@
                       {% endfor %}
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
             <!-- End Sidebar -->

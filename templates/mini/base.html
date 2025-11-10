@@ -7,6 +7,167 @@
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{% static 'assets/imgs/template/favicon.svg' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Social Media Icons */
+        .footer .box-socials .footer-social-icon {
+            background: transparent !important;
+            transform: none !important;
+            transition: none !important;
+            animation: none !important;
+        }
+        .footer .box-socials .footer-social-icon:hover {
+            background: transparent !important;
+            transform: none !important;
+            opacity: 1 !important;
+            filter: none !important;
+            box-shadow: none !important;
+            animation: none !important;
+            transition: none !important;
+        }
+        
+        /* Light/Dark Mode Theme */
+        :root {
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+        }
+        
+        html.theme-day {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+        }
+        
+        html.theme-day body {
+            background-color: #ffffff !important;
+        }
+        
+        html.theme-day .bg-gray-900,
+        html.theme-day .bg-gray-850,
+        html.theme-day .bg-gray-800 {
+            background-color: #f3f4f6 !important;
+        }
+        
+        html.theme-day .color-white,
+        html.theme-day .color-gray-50 {
+            color: #111827 !important;
+        }
+        
+        html.theme-day .color-gray-500,
+        html.theme-day .color-gray-600,
+        html.theme-day .color-gray-700 {
+            color: #6b7280 !important;
+        }
+        
+        html.theme-day .border-gray-800 {
+            border-color: #e5e7eb !important;
+        }
+        
+        html.theme-day .header {
+            background-color: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        html.theme-day .footer {
+            background-color: #f9fafb !important;
+        }
+        
+        html.theme-day .card-blog-1,
+        html.theme-day .card-style-1,
+        html.theme-day .card-style-2 {
+            background-color: #ffffff !important;
+            border: 1px solid #e5e7eb;
+        }
+        
+        /* Editor's Picked Cards - Equal Height */
+        .card-blog-1 {
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+        }
+        
+        .card-blog-1 .card-image {
+            flex-shrink: 0 !important;
+        }
+        
+        .card-blog-1 .card-image img {
+            width: 100% !important;
+            height: 280px !important;
+            object-fit: cover !important;
+            border-radius: 12px !important;
+        }
+        
+        .card-blog-1 .card-info {
+            display: flex !important;
+            flex-direction: column !important;
+            flex-grow: 1 !important;
+            justify-content: space-between !important;
+        }
+        
+        .card-blog-1 .card-info h4 {
+            min-height: 60px !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            line-clamp: 2 !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+        }
+        
+        /* Ensure columns have equal height */
+        .row.mt-70 {
+            display: flex !important;
+            flex-wrap: wrap !important;
+        }
+        
+        .row.mt-70 > .col-lg-6 {
+            display: flex !important;
+            margin-bottom: 30px !important;
+        }
+        
+        /* Subscribe Box Responsive */
+        @media (max-width: 576px) {
+            .box-subscriber form {
+                flex-direction: column !important;
+            }
+            
+            .box-subscriber input.input-sybscriber,
+            .box-subscriber input.form-control {
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .box-subscriber button {
+                width: 100% !important;
+                justify-content: center !important;
+            }
+        }
+        
+        @media (max-width: 991px) {
+            #subscribeFormFooter {
+                flex-direction: column !important;
+            }
+            
+            #subscribeFormFooter input,
+            #subscribeFormFooter button {
+                width: 100% !important;
+            }
+        }
+        
+        /* Subscribe Message Animation */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Header -->
@@ -23,33 +184,43 @@
           <div class="header-nav">
             <nav class="nav-main-menu d-none d-xl-block">
               <ul class="main-menu">
-                <li class="menu-item"><a class="color-gray-500" href="{% url 'home' %}">Home</a>
+                <li class="menu-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                  <a class="{% if request.resolver_match.url_name == 'home' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'home' %}">Home</a>
                 </li>
-                <li class="menu-item"><a class="color-gray-500" href="{% url 'about'%}">About</a>
+                <li class="menu-item {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                  <a class="{% if request.resolver_match.url_name == 'about' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'about'%}">About</a>
                 </li>
-                <li class="menu-item"><a class="color-gray-500" href="{% url 'portfolio' %}">Portfolio</a>
-                <li class="menu-item"><a class="color-gray-500" href="{% url 'category' %}">Category</a>
+                <li class="menu-item {% if request.resolver_match.url_name == 'portfolio' or request.resolver_match.url_name == 'portfolio_detail' %}active{% endif %}">
+                  <a class="{% if request.resolver_match.url_name == 'portfolio' or request.resolver_match.url_name == 'portfolio_detail' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'portfolio' %}">Portfolio</a>
                 </li>
-                <li><a class="color-gray-500" href="{% url 'contact' %}">Contact</a></li>
+                <li class="menu-item {% if request.resolver_match.url_name == 'category' %}active{% endif %}">
+                  <a class="{% if request.resolver_match.url_name == 'category' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'category' %}">Category</a>
+                </li>
+                <li class="menu-item {% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                  <a class="{% if request.resolver_match.url_name == 'contact' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'contact' %}">Contact</a>
+                </li>
               </ul>
             </nav>
             <div class="burger-icon burger-icon-white"><span class="burger-icon-top"></span><span class="burger-icon-mid"></span><span class="burger-icon-bottom"></span></div>
           </div>
           <div class="header-right text-end"><a class="btn btn-search" href="#"></a>
             <div class="form-search p-20">
-              <form action="#">
-                <input class="form-control" type="text" placeholder="Search">
+              <form action="{% url 'search' %}" method="GET">
+                <input class="form-control" type="text" name="q" placeholder="Search posts, categories, tags..." value="{{ request.GET.q }}">
                 <input class="btn-search-2" type="submit" value="">
               </form>
               <div class="popular-keywords text-start mt-20">
-                <p class="mb-10 color-white">Popular tags:</p><a class="color-gray-600 mr-10 font-xs" href="#"># Travel,</a><a class="color-gray-600 mr-10 font-xs" href="#"># Tech,</a><a class="color-gray-600 mr-10 font-xs" href="#"># Movie</a><a class="color-gray-600 mr-10 font-xs" href="#"># Lifestyle</a><a class="color-gray-600 mr-10 font-xs" href="#"># Sport</a>
+                <p class="mb-10 color-white">Popular tags:</p>
+                {% for tag in tags|slice:":5" %}
+                  <a class="color-gray-600 mr-10 font-xs" href="{% url 'posts_by_tag' tag.slug %}"># {{ tag.name }}</a>
+                {% endfor %}
               </div>
             </div>
             <div class="switch-button">
               <div class="form-check form-switch">
                 <input class="form-check-input" id="flexSwitchCheckChecked" type="checkbox" role="switch" checked="">
               </div>
-            </div><a class="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="page-login.html">Subscribe</a>
+            <!-- </div><a class="btn btn-linear d-none d-sm-inline-block hover-up hover-shadow" href="page-login.html">Subscribe</a> -->
           </div>
         </div>
       </div>
@@ -62,18 +233,24 @@
             <div class="mobile-menu-wrap mobile-header-border">
               <nav class="mt-15">
                 <ul class="mobile-menu font-heading">
-                  <li class="has-children"><a href="{% url 'home' %}">Home</a>
+                  <li class="has-children {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                    <a class="{% if request.resolver_match.url_name == 'home' %}color-linear{% endif %}" href="{% url 'home' %}">Home</a>
                   </li>
-                  <li class="has-children"><a href="{% url 'about' %}">About</a>
+                  <li class="has-children {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                    <a class="{% if request.resolver_match.url_name == 'about' %}color-linear{% endif %}" href="{% url 'about' %}">About</a>
                   </li>
-                  <li class="has-children"><a href="{% url 'category' %}">Category</a>
+                  <li class="has-children {% if request.resolver_match.url_name == 'category' %}active{% endif %}">
+                    <a class="{% if request.resolver_match.url_name == 'category' %}color-linear{% endif %}" href="{% url 'category' %}">Category</a>
                   </li>
                   
-                  <li class="has-children"><a class="color-gray-500" href="{% url 'portfolio' %}">Portfolio</a>
+                  <li class="has-children {% if request.resolver_match.url_name == 'portfolio' or request.resolver_match.url_name == 'portfolio_detail' %}active{% endif %}">
+                    <a class="{% if request.resolver_match.url_name == 'portfolio' or request.resolver_match.url_name == 'portfolio_detail' %}color-linear{% else %}color-gray-500{% endif %}" href="{% url 'portfolio' %}">Portfolio</a>
                   </li>
                   <!-- <li class="has-children"><a href="#">Pages</a>
                   </li> -->
-                  <li><a href="{% url 'contact' %}">Contact</a></li>
+                  <li class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}">
+                    <a class="{% if request.resolver_match.url_name == 'contact' %}color-linear{% endif %}" href="{% url 'contact' %}">Contact</a>
+                  </li>
                 </ul>
               </nav>
             </div>
@@ -115,17 +292,17 @@
                 <!-- You can add a description field to SiteSetting if you want -->
                 Welcome to {{ site_settings.site_name|default:"Personal Blog" }}!
               </p>
-              <h6 class="color-white mb-5 wow animate__animated animate__fadeInUp">Address</h6>
+              <h4 class="color-white mb-5 wow animate__animated animate__fadeInUp">Address</h4>
               <p class="text-sm color-gray-500 wow animate__animated animate__fadeInUp">
                 {{ site_settings.address|default:"123 Main Street" }}<br>
                 {{ site_settings.email|default:"info@example.com" }}<br>
                 {{ site_settings.phone|default:"(123) 456-7890" }}
               </p>
             </div>
-            <div class="col-lg-4 mb-30">
+            <div class="col-lg-3 mb-30">
               <h6 class="text-lg mb-30 color-white wow animate__animated animate__fadeInUp">Categories</h6>
               <div class="row">
-                <div class="col-6">
+                <div class="col-12">
                   <ul class="menu-footer">
                     {% for category in categories %}
                       {% if category.slug %}
@@ -138,7 +315,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-4 mb-30">
+            <div class="col-lg-2 mb-30">
               <h6 class="text-lg mb-30 color-white wow animate__animated animate__fadeInUp">Tags</h6>
               <div class="row">
                 <div class="col-12">
@@ -152,41 +329,66 @@
                 </div>
               </div>
             </div>
-            
-             <div class="footer-bottom border-gray-800">
-            <div class="row">
-              <div class="col-lg-5 text-center text-lg-start">
-                <p class="text-base color-white wow animate__animated animate__fadeIn">© Created by<a class="copyright" href="https://sakkhar.substack.com/" target="_blank"> Sakkhar</a></p>
+            <div class="col-lg-3 mb-30">
+              <h6 class="text-lg mb-30 color-white wow animate__animated animate__fadeInUp">Newsletter</h6>
+              <p class="text-sm color-gray-500 mb-20 wow animate__animated animate__fadeInUp">
+                Sign up to be first to receive the latest stories inspiring us, case studies, and industry news.
+              </p>
+              <form id="subscribeFormFooter" class="wow animate__animated animate__fadeInUp">
+                {% csrf_token %}
+                <!-- <div class="form-group mb-15">
+                  <input class="form-control" type="text" placeholder="Your name" name="name"
+                         style="padding: 12px 16px; border: 1px solid #374151; border-radius: 8px; background: #1f2937; color: #9ca3af; font-size: 14px; width: 100%;">
+                </div> -->
+                <div class="form-group mb-15">
+                  <input class="form-control" type="email" name="email" id="subscribeEmailFooter" 
+                         placeholder="Emaill address" required
+                         style="padding: 12px 16px; border: 1px solid #374151; border-radius: 8px; background: #1f2937; color: #9ca3af; font-size: 14px; width: 100%;">
+                </div>
+                <button class="btn btn-linear" type="submit" 
+                        style="padding: 12px 24px; border-radius: 8px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                  <span>Subscribe</span>
+                  <i class="fi-rr-arrow-small-right"></i>
+                </button>
+              </form>
+              <div id="subscribeMessageFooter" style="margin-top: 15px; display: none;"></div>
+            </div>
+          </div>
+          
+          <div class="footer-bottom border-gray-800">
+            <div class="row align-items-center">
+              <div class="col-lg-6 text-start">
+                <p class="text-base color-white wow animate__animated animate__fadeIn">© {% now "Y" %} Created with ❤️ by<a class="copyright" href="https://sakkhar.substack.com/" target="_blank"> Sakkhar</a></p>
               </div>
-              <div class="col-lg-7 text-center text-lg-end">
-                <div class="box-socials">
+              <div class="col-lg-6 text-end">
+                <div class="box-socials" style="display: inline-flex; gap: 20px; flex-wrap: wrap; justify-content: flex-end;">
                   {% if site_settings.facebook %}
-                    <a class="icon-socials color-gray-500 mr-20" href="{{ site_settings.facebook }}" target="_blank" title="Facebook">
-                      <i class="fab fa-facebook-f"></i>
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.facebook }}" target="_blank" title="Facebook" style="font-size: 32px; color: #1877F2 !important;">
+                      <i class="fab fa-facebook"></i>
                     </a>
                   {% endif %}
                   {% if site_settings.twitter %}
-                    <a class="icon-socials color-gray-500 mr-20" href="{{ site_settings.twitter }}" target="_blank" title="Twitter/X">
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.twitter }}" target="_blank" title="Twitter/X" style="font-size: 32px; color: #1DA1F2 !important;">
                       <i class="fab fa-twitter"></i>
                     </a>
                   {% endif %}
                   {% if site_settings.linkedin %}
-                    <a class="icon-socials color-gray-500 mr-20" href="{{ site_settings.linkedin }}" target="_blank" title="LinkedIn">
-                      <i class="fab fa-linkedin-in"></i>
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.linkedin }}" target="_blank" title="LinkedIn" style="font-size: 32px; color: #0A66C2 !important;">
+                      <i class="fab fa-linkedin"></i>
                     </a>
                   {% endif %}
                   {% if site_settings.instagram %}
-                    <a class="icon-socials color-gray-500 mr-20" href="{{ site_settings.instagram }}" target="_blank" title="Instagram">
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.instagram }}" target="_blank" title="Instagram" style="font-size: 32px; color: #E4405F !important;">
                       <i class="fab fa-instagram"></i>
                     </a>
                   {% endif %}
                   {% if site_settings.youtube %}
-                    <a class="icon-socials color-gray-500 mr-20" href="{{ site_settings.youtube }}" target="_blank" title="YouTube">
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.youtube }}" target="_blank" title="YouTube" style="font-size: 32px; color: #FF0000 !important;">
                       <i class="fab fa-youtube"></i>
                     </a>
                   {% endif %}
                   {% if site_settings.github %}
-                    <a class="icon-socials color-gray-500" href="{{ site_settings.github }}" target="_blank" title="GitHub">
+                    <a class="footer-social-icon wow animate__animated animate__fadeInUp" href="{{ site_settings.github }}" target="_blank" title="GitHub" style="font-size: 32px; color: #ffffff !important;">
                       <i class="fab fa-github"></i>
                     </a>
                   {% endif %}
@@ -215,5 +417,137 @@
     <script src="{% static 'assets/js/vendors/swiper-bundle.min.js' %}"></script>
     <script src="{% static 'assets/js/vendors/jquery.progressScroll.min.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
+    
+    <!-- Subscribe Form Handler -->
+    <script>
+    $(document).ready(function() {
+        // Banner Subscribe Form
+        $('#subscribeForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            var email = $('#subscribeEmail').val();
+            var messageDiv = $('#subscribeMessage');
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalBtnHtml = submitBtn.html();
+            
+            // Disable button
+            submitBtn.prop('disabled', true).html('<span style="display: flex; align-items: center; gap: 8px;"><span>Subscribing...</span><i class="fi-rr-time-fast"></i></span>');
+            
+            $.ajax({
+                url: "{% url 'subscribe' %}",
+                method: "POST",
+                data: {
+                    email: email,
+                    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Success message - simple & clean
+                        messageDiv.html(
+                            '<div style="background: #10b981; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                                '<i class="fi-rr-check-circle" style="font-size: 20px; color: #fff;"></i>' +
+                                '<span style="color: #fff; font-size: 14px; font-weight: 500;">' + response.message + '</span>' +
+                            '</div>'
+                        ).fadeIn();
+                        $('#subscribeEmail').val('');
+                    } else {
+                        // Error message - simple & clean
+                        messageDiv.html(
+                            '<div style="background: #ef4444; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                                '<i class="fi-rr-info" style="font-size: 20px; color: #fff;"></i>' +
+                                '<span style="color: #fff; font-size: 14px; font-weight: 500;">' + response.message + '</span>' +
+                            '</div>'
+                        ).fadeIn();
+                    }
+                    
+                    // Re-enable button
+                    submitBtn.prop('disabled', false).html(originalBtnHtml);
+                    
+                    // Hide message after 6 seconds with smooth transition
+                    setTimeout(function() {
+                        messageDiv.fadeOut(500);
+                    }, 6000);
+                },
+                error: function() {
+                    messageDiv.html(
+                        '<div style="background: #ef4444; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                            '<i class="fi-rr-cross-circle" style="font-size: 20px; color: #fff;"></i>' +
+                            '<span style="color: #fff; font-size: 14px; font-weight: 500;">An error occurred. Please try again.</span>' +
+                        '</div>'
+                    ).fadeIn();
+                    submitBtn.prop('disabled', false).html(originalBtnHtml);
+                    
+                    setTimeout(function() {
+                        messageDiv.fadeOut(500);
+                    }, 6000);
+                }
+            });
+        });
+        
+        // Footer Subscribe Form
+        $('#subscribeFormFooter').on('submit', function(e) {
+            e.preventDefault();
+            
+            var email = $('#subscribeEmailFooter').val();
+            var messageDiv = $('#subscribeMessageFooter');
+            var submitBtn = $(this).find('button[type="submit"]');
+            var originalBtnHtml = submitBtn.html();
+            
+            // Disable button
+            submitBtn.prop('disabled', true).html('<span style="display: flex; align-items: center; gap: 8px;"><span>Subscribing...</span><i class="fi-rr-time-fast"></i></span>');
+            
+            $.ajax({
+                url: "{% url 'subscribe' %}",
+                method: "POST",
+                data: {
+                    email: email,
+                    csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Success message - simple & clean
+                        messageDiv.html(
+                            '<div style="background: #10b981; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                                '<i class="fi-rr-check-circle" style="font-size: 20px; color: #fff;"></i>' +
+                                '<span style="color: #fff; font-size: 14px; font-weight: 500;">' + response.message + '</span>' +
+                            '</div>'
+                        ).fadeIn();
+                        $('#subscribeEmailFooter').val('');
+                        $(e.target).find('input[name="name"]').val('');
+                    } else {
+                        // Error message - simple & clean
+                        messageDiv.html(
+                            '<div style="background: #ef4444; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                                '<i class="fi-rr-info" style="font-size: 20px; color: #fff;"></i>' +
+                                '<span style="color: #fff; font-size: 14px; font-weight: 500;">' + response.message + '</span>' +
+                            '</div>'
+                        ).fadeIn();
+                    }
+                    
+                    // Re-enable button
+                    submitBtn.prop('disabled', false).html(originalBtnHtml);
+                    
+                    // Hide message after 6 seconds with smooth transition
+                    setTimeout(function() {
+                        messageDiv.fadeOut(500);
+                    }, 6000);
+                },
+                error: function() {
+                    messageDiv.html(
+                        '<div style="background: #ef4444; padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out;">' +
+                            '<i class="fi-rr-cross-circle" style="font-size: 20px; color: #fff;"></i>' +
+                            '<span style="color: #fff; font-size: 14px; font-weight: 500;">An error occurred. Please try again.</span>' +
+                        '</div>'
+                    ).fadeIn();
+                    submitBtn.prop('disabled', false).html(originalBtnHtml);
+                    
+                    setTimeout(function() {
+                        messageDiv.fadeOut(500);
+                    }, 6000);
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

@@ -90,11 +90,72 @@ class ContactMessage(models.Model):
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.email
+    
+    class Meta:
+        ordering = ['-subscribed_at']
+
+class AboutPage(models.Model):
+    title = models.CharField(max_length=200, default="About Me", blank=True)
+    intro = models.TextField(default="Welcome to my blog! My name is Sakkhar, and I am passionate about sharing knowledge, ideas, and inspiration on technology, travel, lifestyle, and more.", blank=True)
+    content_1 = models.TextField(default="I use animation as a third dimension by which to simplify experiences and guide you through each and every interaction. I'm not adding motion just to spruce things up, but doing it in ways that make your experience better.", blank=True)
+    content_2 = models.TextField(default="On this blog, you'll find editor's picks, hot topics, and the latest posts from a variety of categories. Whether you're here for tips, reviews, or just to explore, I hope you enjoy your stay!", blank=True)
+    resume_file = models.FileField(upload_to='about/', blank=True, null=True, help_text="Upload resume PDF")
+    
+    def __str__(self):
+        return "About Page Content"
+    
+    class Meta:
+        verbose_name = "About Page"
+        verbose_name_plural = "About Page"
+
+class ContactPage(models.Model):
+    title = models.CharField(max_length=200, default="Contact Me", blank=True)
+    description = models.TextField(default="We are a creative and dedicated group of individuals who love web development.", blank=True)
+    form_title = models.CharField(max_length=200, default="Drop Us a Line", blank=True)
+    form_subtitle = models.CharField(max_length=255, default="Your email address will not be published. Required fields are marked *", blank=True)
+    google_map_embed = models.TextField(blank=True, help_text="Google Maps embed URL")
+    
+    def __str__(self):
+        return "Contact Page Content"
+    
+    class Meta:
+        verbose_name = "Contact Page"
+        verbose_name_plural = "Contact Page"
+
 class SiteSetting(models.Model):
+    site_name = models.CharField(max_length=100, default="My Website", blank=True)
     phone = models.CharField(max_length=50, blank=True)
     email = models.EmailField(blank=True)
     address = models.CharField(max_length=255, blank=True)
     logo = models.ImageField(upload_to='site_settings/', blank=True, null=True)
+    banner_image = models.ImageField(upload_to='site_settings/', blank=True, null=True)
+    
+    # Homepage Banner
+    banner_greeting = models.CharField(max_length=100, default="Hello Everyone!", blank=True)
+    banner_name = models.CharField(max_length=100, default="Your Name", blank=True)
+    banner_roles = models.CharField(max_length=255, default='[ "Designer", "Developer", "Creator" ]', blank=True, help_text="JSON format array for typewriter effect")
+    banner_description = models.TextField(default="I use animation as a third dimension by which to simplify experiences and guiding through each and every interaction.", blank=True)
+    
+    # Subscribe Section
+    subscribe_placeholder = models.CharField(max_length=100, default="Type your email address", blank=True)
+    subscribe_button_text = models.CharField(max_length=50, default="Subscribe", blank=True)
+    
+    # Homepage Hot Topics
+    hot_topics_title = models.CharField(max_length=100, default="Hot topics", blank=True)
+    hot_topics_description = models.TextField(default="Don't miss the trending topics", blank=True)
+    
+    # Portfolio Page Content
+    portfolio_title = models.CharField(max_length=200, default="My Latest Projects", blank=True)
+    portfolio_description = models.TextField(default="The convention is the main event of the year for professionals in the world of design and architecture.", blank=True)
+    
+    # Social Media
     facebook = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
@@ -109,17 +170,24 @@ class SiteSetting(models.Model):
         verbose_name = "Site Setting"
         verbose_name_plural = "Site Settings"
 
+class PortfolioCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100, unique=True)
+    order = models.IntegerField(default=0, help_text="Display order (lower number appears first)")
+    
+    class Meta:
+        ordering = ['order', 'name']
+        verbose_name_plural = "Portfolio Categories"
+    
+    def __str__(self):
+        return self.name
+
 class Portfolio(models.Model):
-    CATEGORY_CHOICES = [
-        ('web', 'Web Development'),
-        ('mobile', 'Mobile App'),
-        ('motion', 'Motion'),
-        ('graphic', 'Graphic Design'),
-    ]
     title = models.CharField(max_length=200)
     image = models.ImageField(upload_to='portfolio/')
     description = models.TextField()
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    category = models.CharField(max_length=100, blank=True, help_text="Enter category name (e.g., Web Development, Mobile App, etc.)")
+    tech_stack = models.CharField(max_length=500, blank=True, help_text="Technologies used (e.g., Django, React, PostgreSQL)")
     link = models.URLField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200, blank=True)

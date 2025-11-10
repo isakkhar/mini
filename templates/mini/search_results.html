@@ -1,0 +1,91 @@
+{% extends 'mini/base.html' %}
+{% load static %}
+{% block title %}Search Results - {{ query }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-xl-10 col-lg-12 m-auto">
+      <div class="text-center mt-70 mb-50">
+        <h1 class="color-linear d-inline-block mb-20">Search Results</h1>
+        {% if query %}
+          <p class="text-xl color-gray-500">
+            Found <span class="color-linear">{{ total_results }}</span> result{{ total_results|pluralize }} for "<strong>{{ query }}</strong>"
+          </p>
+        {% else %}
+          <p class="text-xl color-gray-500">Enter a search term to find posts</p>
+        {% endif %}
+      </div>
+
+      {% if results %}
+        <div class="box-list-posts">
+          {% for post in results %}
+          <div class="card-list-posts wow animate__animated animate__fadeIn">
+            <div class="card-image hover-up">
+              <a href="{% url 'post_detail' slug=post.slug %}">
+                {% if post.image %}
+                  <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                  <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ post.title }}">
+                {% endif %}
+              </a>
+            </div>
+            <div class="card-info">
+              <a class="btn btn-tag bg-gray-800 hover-up" href="{% url 'posts_by_category' category_slug=post.category.slug %}">{{ post.category.name }}</a>
+              <a href="{% url 'post_detail' slug=post.slug %}">
+                <h4 class="mt-15 mb-20 color-white">{{ post.title }}</h4>
+              </a>
+              <p class="color-gray-500">{{ post.content|truncatewords:30|striptags }}</p>
+              <div class="row mt-20">
+                <div class="col-7">
+                  {% for tag in post.tags.all|slice:":3" %}
+                    <a class="color-gray-700 text-sm mr-15" href="{% url 'posts_by_tag' tag_slug=tag.slug %}"># {{ tag.name }}</a>
+                  {% endfor %}
+                </div>
+                <div class="col-5 text-end">
+                  <span class="color-gray-700 text-sm timeread">{{ post.read_time }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% elif query %}
+        <div class="text-center mt-70 mb-70" style="background: #1f2937; padding: 60px 20px; border-radius: 16px;">
+          <i class="fi-rr-search" style="font-size: 64px; color: #9ca3af; margin-bottom: 20px;"></i>
+          <h4 class="color-white mb-20">No results found</h4>
+          <p class="color-gray-500 mb-30">Try different keywords or browse our popular tags below</p>
+          <a href="{% url 'home' %}" class="btn btn-linear">Back to Home</a>
+        </div>
+      {% endif %}
+
+      <!-- Popular Tags -->
+      {% if popular_tags %}
+      <div class="mt-70 mb-50">
+        <h5 class="color-white mb-30">Popular Tags</h5>
+        <div class="row">
+          {% for tag in popular_tags %}
+          <div class="col-xl-2 col-lg-3 col-md-4 col-sm-4 col-6 mb-20">
+            <div class="card-style-2 hover-up hover-neon">
+              <div class="card-image">
+                <a href="{% url 'posts_by_tag' tag_slug=tag.slug %}">
+                  {% if tag.image %}
+                    <img src="{{ tag.image.url }}" alt="{{ tag.name }}">
+                  {% else %}
+                    <img src="{% static 'assets/imgs/template/ava.jpg' %}" alt="{{ tag.name }}">
+                  {% endif %}
+                </a>
+              </div>
+              <div class="card-info">
+                <a class="color-gray-500" href="{% url 'posts_by_tag' tag_slug=tag.slug %}">{{ tag.name }}</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
